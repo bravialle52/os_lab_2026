@@ -1,0 +1,31 @@
+CC=gcc
+CFLAGS=-I.
+
+# target "all" — собирает ВСЕ программы (Задание 3)
+# Это первый target, поэтому запуск "make" без аргументов выполнит его
+all: sequential_min_max parallel_min_max exec_sequential
+
+# Компиляция utils.c → utils.o (объектный файл)
+# Пересобирается если изменился utils.c или utils.h
+utils.o: utils.c utils.h
+	$(CC) -c utils.c $(CFLAGS)
+
+# Компиляция find_min_max.c → find_min_max.o
+find_min_max.o: find_min_max.c find_min_max.h utils.h
+	$(CC) -c find_min_max.c $(CFLAGS)
+
+# Линковка sequential_min_max из .c и .o файлов
+sequential_min_max: sequential_min_max.c utils.o find_min_max.o
+	$(CC) -o sequential_min_max sequential_min_max.c find_min_max.o utils.o $(CFLAGS)
+
+# Линковка parallel_min_max
+parallel_min_max: parallel_min_max.c utils.o find_min_max.o
+	$(CC) -o parallel_min_max parallel_min_max.c find_min_max.o utils.o $(CFLAGS)
+
+# Сборка exec_sequential (Задание 4)
+exec_sequential: exec_sequential.c
+	$(CC) -o exec_sequential exec_sequential.c $(CFLAGS)
+
+# Очистка — удаляет все скомпилированные файлы
+clean:
+	rm -f *.o sequential_min_max parallel_min_max exec_sequential
