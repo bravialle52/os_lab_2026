@@ -1,0 +1,19 @@
+CC=gcc
+CFLAGS=-I.
+
+all: psum
+
+sum.o: sum.c sum.h
+	$(CC) -o sum.o -c sum.c $(CFLAGS)
+
+libsum.a: sum.o
+	ar rcs libsum.a sum.o
+
+utils.o: utils.c utils.h
+	$(CC) -o utils.o -c utils.c $(CFLAGS)
+
+psum: utils.o libsum.a parallel_sum.c
+	$(CC) -o psum parallel_sum.c utils.o -L. -lsum -lpthread $(CFLAGS)
+
+clean:
+	rm -f *.o psum libsum.a
